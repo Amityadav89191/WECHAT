@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/home">
+    <fragment
+        android:id="@+id/home"
+        android:name="com.jack.instagramclone.fragments.HomeFragment"
+        android:label="fragment_home2"
+        tools:layout="@layout/fragment_home2" />
+    <fragment
+        android:id="@+id/search"
+        android:name="com.jack.instagramclone.fragments.searchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/add"
+        android:name="com.jack.instagramclone.fragments.addFragment"
+        android:label="fragment_add2"
+        tools:layout="@layout/fragment_add2" />
+    <fragment
+        android:id="@+id/reel"
+        android:name="com.jack.instagramclone.fragments.reelFragment"
+        android:label="fragment_reel2"
+        tools:layout="@layout/fragment_reel2" />
+    <fragment
+        android:id="@+id/profile"
+        android:name="com.jack.instagramclone.fragments.profileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+</navigation>
