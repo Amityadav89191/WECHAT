@@ -5,20 +5,24 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import com.jack.instagramclone.Models.Reel
+import com.jack.instagramclone.Models.post
 import com.jack.instagramclone.R
-import com.jack.instagramclone.adapter.ReelAdapter
+import com.jack.instagramclone.adapter.MyPostRvAdapter
+import com.jack.instagramclone.adapter.MyReelRvAdapter
+import com.jack.instagramclone.databinding.FragmentMyReelsBinding
+import com.jack.instagramclone.databinding.FragmentMypostBinding
 import com.jack.instagramclone.databinding.FragmentReelBinding
 import com.jack.instagramclone.utils.REEL
 
 
-class reelFragment : Fragment() {
-private lateinit var binding: FragmentReelBinding
-lateinit var adapter: ReelAdapter
-var reellist=ArrayList<Reel>()
+class MyReelsFragment : Fragment() {
+    private lateinit var binding:FragmentMyReelsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,21 +33,18 @@ var reellist=ArrayList<Reel>()
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        binding=FragmentReelBinding.inflate(inflater, container, false)
-        adapter=ReelAdapter(requireContext(),reellist)
-        binding.viewpager.adapter=adapter
-        Firebase.firestore.collection(REEL).get().addOnSuccessListener {
+        binding= FragmentMyReelsBinding.inflate(inflater, container, false)
+        var reellist=ArrayList<Reel>()
+        var adapter= MyReelRvAdapter(requireContext(), reellist)
+        binding.rv.layoutManager=StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL)
+        binding.rv.adapter=adapter
+        Firebase.firestore.collection(Firebase.auth.currentUser!!.uid+ REEL).get().addOnSuccessListener {
             var templist=ArrayList<Reel>()
-            reellist.clear()
-            for (i in it.documents)
-            {
-                var reel=i.toObject<Reel>()!!
+            for(i in it.documents){
+                var reel: Reel =i.toObject<Reel>()!!
                 templist.add(reel)
-
             }
             reellist.addAll(templist)
-            reellist.reverse()
             adapter.notifyDataSetChanged()
         }
 
@@ -51,6 +52,8 @@ var reellist=ArrayList<Reel>()
     }
 
     companion object {
+
+
 
     }
 }
