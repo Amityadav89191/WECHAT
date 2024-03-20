@@ -49,7 +49,7 @@ class signupActivity : AppCompatActivity() {
                 Firebase.firestore.collection(USER_NODE).document(Firebase.auth.currentUser!!.uid)
                     .get().addOnSuccessListener {
                     user = it.toObject<user>()!!
-                        if(!user.image.isNullOrEmpty()){
+                        if(user.image.isNullOrEmpty()){
                             Picasso.get().load(user.image).into(binding.profileImage)
 
                         }

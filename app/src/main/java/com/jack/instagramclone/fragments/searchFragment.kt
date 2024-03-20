@@ -5,29 +5,29 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.Firebase
+import com.google.firebase.app
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
+import com.google.firebase.firestore.toObjects
+import com.jack.instagramclone.Models.user
 import com.jack.instagramclone.R
+import com.jack.instagramclone.adapter.SerachAdapter
+import com.jack.instagramclone.databinding.FragmentSearchBinding
+import com.jack.instagramclone.utils.USER_NODE
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [searchFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class searchFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    lateinit var binding: FragmentSearchBinding
+    lateinit var adapter: SerachAdapter
+     var userlist = ArrayList<user>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
     }
 
     override fun onCreateView(
@@ -35,26 +35,55 @@ class searchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false)
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        binding.rv.layoutManager = LinearLayoutManager(requireContext())
+        adapter = SerachAdapter(requireContext(), userlist)
+        binding.rv.adapter = adapter
+
+
+        Firebase.firestore.collection(USER_NODE).get().addOnSuccessListener {
+            var templist = ArrayList<user>()
+            userlist.clear()
+            for (i in it.documents) {
+                if (i.id.toString().equals(Firebase.auth.currentUser!!.uid.toString())) {
+
+                } else {
+                    var user: user = i.toObject<user>()!!
+                    templist.add(user)
+
+                }
+            }
+            userlist.addAll(templist)
+            adapter.notifyDataSetChanged()
+        }
+        binding.searchButton.setOnClickListener {
+            var text=binding.searchView.text.toString()
+            Firebase.firestore.collection(USER_NODE).whereEqualTo("name",text).get().addOnSuccessListener {
+
+                var templist = ArrayList<user>()
+                userlist.clear()
+                if (it.isEmpty) {
+
+                } else {
+                    for (i in it.documents) {
+                        if (i.id.toString().equals(Firebase.auth.currentUser!!.uid.toString())) {
+
+                        } else {
+                            var user: user = i.toObject<user>()!!
+                            templist.add(user)
+
+                        }
+                    }
+                    userlist.addAll(templist)
+                    adapter.notifyDataSetChanged()
+
+                }
+            }
+
+        }
+        return binding.root
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment searchFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            searchFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
     }
 }
